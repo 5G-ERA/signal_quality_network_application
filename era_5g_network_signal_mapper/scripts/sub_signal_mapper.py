@@ -16,6 +16,7 @@ import std_msgs.msg
 import sensor_msgs.point_cloud2 as pcl2
 from tf2_sensor_msgs.tf2_sensor_msgs import do_transform_cloud
 
+# [[(0.3325471580028534, -1.9896667003631592, 0.025528445839881897, 8190976)]]
 
 
 if __name__ == '__main__':
@@ -30,9 +31,29 @@ if __name__ == '__main__':
     final_semantic_map_frame = 'final_semantic_map'
     map_fixed_frame = 'robot_map'
 
+    'historical pcl2'
+    merged_cloud = []
+
+    'Function to construct a pointcloud2 object'
+    def construct_pointCloud2(points):
+        #print(points)
+        #print("==============")
+        header = std_msgs.msg.Header()
+        fields = [PointField('x', 0, PointField.FLOAT32, 1),
+            PointField('y', 4, PointField.FLOAT32, 1),
+            PointField('z', 8, PointField.FLOAT32, 1),
+            PointField('rgb', 12, PointField.UINT32, 1),
+            ]
+
+        #scaled_polygon_pcl = pcl2.create_cloud_xyz32(header, cloud_points)
+        scaled_polygon_pcl = pcl2.create_cloud(header, fields, points)
+        scaled_polygon_pcl.header.stamp = rospy.Time.now()
+        scaled_polygon_pcl.header.frame_id = map_fixed_frame
+        return scaled_polygon_pcl
+
     def sub_callback(pcl):
 
-        # Have to append to previous pointclouds received.
+        # Transform pcl2 from frame /semantic_map to /robot_map
         
         tf.waitForTransform("/robot_map", "/semantic_map", rospy.Time(), rospy.Duration(4.0))
         t = tf.getLatestCommonTime("/robot_map", "/semantic_map") # Transform from /semantic_map frame to /robot_map frame.
@@ -48,30 +69,24 @@ if __name__ == '__main__':
         trans = tf_buffer.lookup_transform("robot_map", "semantic_map",rospy.Time(), rospy.Duration(4.0))
         cloud_out = do_transform_cloud(pcl, trans)
         
-        '''
-        gen = pcl2.read_points(pcl, skip_nans=True, field_names=("x", "y", "z"))
+        # Get the points from the pcl2.
+        gen = pcl2.read_points(cloud_out, skip_nans=True)
         int_data = list(gen)
-        middleIndex = (len(int_data)-1)/2
-        middle_point = int_data[middleIndex]
-        '''
+        
+        temp_list = []
+        for element in int_data:
+            for x in element:
+                temp_list.append(x)
+        #print(temp_list)
 
-        '''
-        print(pcl.header)
-        print(pcl.fields)
-        print(int_data)
-        print("================")
-        '''
-        '''
-        br.sendTransform((0.0, 0.0, 0.0),
-                         (0.0, 0.0, 0.0, 1.0),
-                         rospy.Time.now(),
-                         final_semantic_map_frame,
-                         map_fixed_frame)
-        '''
-        #pcl.header.frame_id = map_fixed_frame #final_semantic_map_frame
-        semantic_pcl_pub.publish(cloud_out)
+        # Append latest pointcloud to merged_cloud
+        merged_cloud.append(temp_list) 
+
+        # Recreate the merged pointcloud
+        map_pcl = construct_pointCloud2(merged_cloud) 
+
+        semantic_pcl_pub.publish(map_pcl)
         rospy.sleep(1.0)
-        # = semantic_map_frame
 
     '''ROS node definition'''
     
