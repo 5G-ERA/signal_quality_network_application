@@ -7,14 +7,14 @@ import numpy as np
 import roslib
 import tf
 
-from std_msgs.msg import String
 from sensor_msgs.msg import PointCloud2, PointField
 import std_msgs.msg
 import sensor_msgs.point_cloud2 as pcl2
 
 if __name__ == '__main__':
-
-    '''Input parameters'''
+    '''
+    Input parameters
+    '''
     robot_base_frame = 'robot_base_link'
     height = 0.3
     lenght = 0.3
@@ -22,70 +22,34 @@ if __name__ == '__main__':
 
     'Static variables'
     semantic_map_frame = 'semantic_map'
-    map_fixed_frame = 'robot_map'
 
-    
-    #Give colour to the pointcloud around the robot.
-    r = 124 # 
-    g = 252 #
+    #Define fixed frame for semantic map.
+    br = tf.TransformBroadcaster()
+
+
+    rospy.init_node('pcl2_pub_example')
+    pcl_pub = rospy.Publisher("/semantic_pcl", PointCloud2)
+    pcl_pub = rospy.Publisher("/current_semantic_pcl", PointCloud2)
+    rospy.loginfo("Initializing sample pcl2 publisher node...")
+    #give time to roscore to make the connections
+    rospy.sleep(1.)
+    r = 124
+    g = 252
     b = 0
-    
+    rgb = struct.unpack('I', struct.pack('BBBB', b, g, r, 0))[0]
     #cloud_points = [[0, 0, 0.0, rgb],[1.0, 2.0, 0.0, rgb], [1.0, 3.0, 0.0, rgb]]
 
-    '''ROS node definition'''
-    br = tf.TransformBroadcaster() #Define fixed frame for semantic map.
-    rospy.init_node('pcl2_pub_example')
-
-    current_pcl_pub = rospy.Publisher("/current_semantic_pcl", PointCloud2)
-    rospy.sleep(1.)
-
-    '''Set pcl colour callback'''
-    def callback(data):
-        rospy.loginfo(data.data)
-        global r
-        global g
-        global b
-        if str(data.data) == "GREEN":
-            
-            r = 124
-            g = 252
-            b = 0
-
-        if str(data.data) == "RED":
-
-            r = 255
-            g = 0
-            b = 0
-
-        if str(data.data) == "BLUE":
-
-            r = 128
-            g = 0
-            b = 0
-
-    rospy.Subscriber("pcl_colour", String, callback)
-
-    rospy.loginfo("Initializing semantic pcl2 mapper...")
-
-    rgb = struct.unpack('I', struct.pack('BBBB', b, g, r, 0))[0]
-
-    '''
+    
     cloud_points = []
     for x in np.arange(0,height,lamba):
         for y in np.arange(-lenght,lenght,lamba):
             cloud_points.append([x, y, 0.0, rgb])
             cloud_points.append([-x, y, 0.0, rgb])
-    '''
 
     '''
     cloud_points = [[0, 0, 0.0, rgb],[0.1, 0.1, 0.0, rgb],[-0.1, -0.1, 0.0, rgb],[0.1, -0.1, 0.0, rgb]
     ,[-0.1, 0.1, 0.0, rgb],[-0.1, 0, 0.0, rgb],[0.1, 0, 0.0, rgb],[0, 0.1, 0.0, rgb],[0, -0.1, 0.0, rgb]]
     '''
-
-    
-    cloud_points = [[0, 0, 0.0, rgb]]
-    
-
     #header
     header = std_msgs.msg.Header()
     
@@ -99,20 +63,18 @@ if __name__ == '__main__':
 
     #scaled_polygon_pcl = pcl2.create_cloud_xyz32(header, cloud_points)
     scaled_polygon_pcl = pcl2.create_cloud(header, fields, cloud_points)
-    #publish   
+    #publish    
     
     # robot_map
     while not rospy.is_shutdown():
-        
         br.sendTransform((0.0, 0.0, 0.0),
                          (0.0, 0.0, 0.0, 1.0),
                          rospy.Time.now(),
                          "semantic_map",
                          "robot_base_link")
-        #rospy.loginfo("happily publishing sample pointcloud.. !")
+        rospy.loginfo("happily publishing sample pointcloud.. !")
         scaled_polygon_pcl.header.stamp = rospy.Time.now()
         scaled_polygon_pcl.header.frame_id = semantic_map_frame
-        #scaled_polygon_pcl.data.color = rgb
+        pcl_pub.publish(scaled_polygon_pcl)
 
-        current_pcl_pub.publish(scaled_polygon_pcl)
         rospy.sleep(1.0)

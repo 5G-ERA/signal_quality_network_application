@@ -164,6 +164,15 @@ include_directories(
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
  )
 
+ catkin_install_python(PROGRAMS
+   scripts/sub_signal_mapper.py
+   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+ )
+
+ catkin_install_python(PROGRAMS
+   scripts/colour_pub.py
+   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+ )
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
 # install(TARGETS ${PROJECT_NAME}_node
