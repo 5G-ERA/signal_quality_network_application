@@ -1,10 +1,17 @@
 
 
 
-Run signal mapper with:
+Running instructions.
 
+*This code assumes RB1 Base complete_sim is running.*
+
+Source workspace
 ```
 source devel/setup.bash
+```
+
+```
+roslaunch rb1_base_sim_bringup rb1_base_complete.launch 
 ```
 
 Create current pointcloud around the robot:
