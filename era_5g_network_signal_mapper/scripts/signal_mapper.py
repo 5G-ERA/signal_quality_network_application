@@ -70,7 +70,7 @@ if __name__ == '__main__':
             for y in np.arange(-lenght,lenght,lamba):
                 cloud_points.append([x, y, 0.0, rgb])
                 cloud_points.append([-x, y, 0.0, rgb])
-        
+        return cloud_points
 
     '''
     cloud_points = [[0, 0, 0.0, rgb],[0.1, 0.1, 0.0, rgb],[-0.1, -0.1, 0.0, rgb],[0.1, -0.1, 0.0, rgb]
@@ -80,7 +80,15 @@ if __name__ == '__main__':
     def create_simple_pointcloud():
 
         rgb = struct.unpack('I', struct.pack('BBBB', b, g, r, 0))[0]
-        cloud_points = [[0, 0, 0.0, rgb]]
+        #cloud_points = [[0, 0, 0.0, rgb]]
+        #cloud_points = [[0, 0, 0.0, rgb],[0.1, 0.1, 0.0, rgb]]
+        
+        cloud_points = []
+        for x in np.arange(0,height,lamba):
+            for y in np.arange(-lenght,lenght,lamba):
+                cloud_points.append([x, y, 0.0, rgb])
+                cloud_points.append([-x, y, 0.0, rgb])
+        
         header = std_msgs.msg.Header()
         fields = [PointField('x', 0, PointField.FLOAT32, 1),
             PointField('y', 4, PointField.FLOAT32, 1),
