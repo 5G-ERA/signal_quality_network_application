@@ -22,15 +22,11 @@ if __name__ == '__main__':
 
     'Static variables'
     semantic_map_frame = 'semantic_map'
-    map_fixed_frame = 'robot_map'
-
     
     #Give colour to the pointcloud around the robot.
     r = 124 # 
     g = 252 #
     b = 0
-    
-    #cloud_points = [[0, 0, 0.0, rgb],[1.0, 2.0, 0.0, rgb], [1.0, 3.0, 0.0, rgb]]
 
     '''ROS node definition'''
     br = tf.TransformBroadcaster() #Define fixed frame for semantic map.
@@ -67,52 +63,45 @@ if __name__ == '__main__':
 
     rospy.loginfo("Initializing semantic pcl2 mapper...")
 
-    rgb = struct.unpack('I', struct.pack('BBBB', b, g, r, 0))[0]
+    def create_complex_pointcloud():
 
-    '''
-    cloud_points = []
-    for x in np.arange(0,height,lamba):
-        for y in np.arange(-lenght,lenght,lamba):
-            cloud_points.append([x, y, 0.0, rgb])
-            cloud_points.append([-x, y, 0.0, rgb])
-    '''
+        cloud_points = []
+        for x in np.arange(0,height,lamba):
+            for y in np.arange(-lenght,lenght,lamba):
+                cloud_points.append([x, y, 0.0, rgb])
+                cloud_points.append([-x, y, 0.0, rgb])
+        
 
     '''
     cloud_points = [[0, 0, 0.0, rgb],[0.1, 0.1, 0.0, rgb],[-0.1, -0.1, 0.0, rgb],[0.1, -0.1, 0.0, rgb]
     ,[-0.1, 0.1, 0.0, rgb],[-0.1, 0, 0.0, rgb],[0.1, 0, 0.0, rgb],[0, 0.1, 0.0, rgb],[0, -0.1, 0.0, rgb]]
     '''
 
-    
-    cloud_points = [[0, 0, 0.0, rgb]]
-    
+    def create_simple_pointcloud():
 
-    #header
-    header = std_msgs.msg.Header()
-    
-    #header.frame_id = robot_base_frame
-    #create pcl from points
-    fields = [PointField('x', 0, PointField.FLOAT32, 1),
-          PointField('y', 4, PointField.FLOAT32, 1),
-          PointField('z', 8, PointField.FLOAT32, 1),
-          PointField('rgb', 12, PointField.UINT32, 1),
-          ]
+        rgb = struct.unpack('I', struct.pack('BBBB', b, g, r, 0))[0]
+        cloud_points = [[0, 0, 0.0, rgb]]
+        header = std_msgs.msg.Header()
+        fields = [PointField('x', 0, PointField.FLOAT32, 1),
+            PointField('y', 4, PointField.FLOAT32, 1),
+            PointField('z', 8, PointField.FLOAT32, 1),
+            PointField('rgb', 12, PointField.UINT32, 1),
+            ]
 
-    #scaled_polygon_pcl = pcl2.create_cloud_xyz32(header, cloud_points)
-    scaled_polygon_pcl = pcl2.create_cloud(header, fields, cloud_points)
-    #publish   
+        #scaled_polygon_pcl = pcl2.create_cloud_xyz32(header, cloud_points)
+        scaled_polygon_pcl = pcl2.create_cloud(header, fields, cloud_points)
+        scaled_polygon_pcl.header.stamp = rospy.Time.now()
+        scaled_polygon_pcl.header.frame_id = semantic_map_frame
+        current_pcl_pub.publish(scaled_polygon_pcl)
+        rospy.sleep(1.0)
     
     # robot_map
     while not rospy.is_shutdown():
+        print(r,g,b)
         
         br.sendTransform((0.0, 0.0, 0.0),
                          (0.0, 0.0, 0.0, 1.0),
                          rospy.Time.now(),
                          "semantic_map",
                          "robot_base_link")
-        #rospy.loginfo("happily publishing sample pointcloud.. !")
-        scaled_polygon_pcl.header.stamp = rospy.Time.now()
-        scaled_polygon_pcl.header.frame_id = semantic_map_frame
-        #scaled_polygon_pcl.data.color = rgb
-
-        current_pcl_pub.publish(scaled_polygon_pcl)
-        rospy.sleep(1.0)
+        create_simple_pointcloud()
