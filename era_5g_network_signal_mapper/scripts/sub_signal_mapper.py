@@ -36,8 +36,7 @@ if __name__ == '__main__':
 
     'Function to construct a pointcloud2 object'
     def construct_pointCloud2(points):
-        #print(points)
-        #print("==============")
+
         header = std_msgs.msg.Header()
         fields = [PointField('x', 0, PointField.FLOAT32, 1),
             PointField('y', 4, PointField.FLOAT32, 1),
@@ -72,15 +71,20 @@ if __name__ == '__main__':
         # Get the points from the pcl2.
         gen = pcl2.read_points(cloud_out, skip_nans=True)
         int_data = list(gen)
-        
+        #print("int_data: "+str(int_data))
+
         temp_list = []
         for element in int_data:
+            mini = []
             for x in element:
-                temp_list.append(x)
-        #print(temp_list)
+                
+                mini.append(x)
+            temp_list.append(mini)
 
         # Append latest pointcloud to merged_cloud
-        merged_cloud.append(temp_list) 
+        for y in temp_list:
+            merged_cloud.append(y)
+        #merged_cloud.append(temp_list) # no es append, es otra cosa parecida.
 
         # Recreate the merged pointcloud
         map_pcl = construct_pointCloud2(merged_cloud) 
