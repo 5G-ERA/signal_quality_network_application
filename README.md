@@ -40,7 +40,7 @@ rosrun pcl_ros pointcloud_to_pcd input:=/semantic_pcl
 To publish the pointcloud again from the pcd file under a particular frame:
 
 ```
-rosrun pcl_ros pcd_to_pointcloud 2240726000.pcd 0.1 _ame_id:=/robot_map
+rosrun pcl_ros pcd_to_pointcloud 2240726000.pcd 0.1 _frame_id:=/robot_map rosrun pcl_ros pcd_to_pointcloud 2240726000.pcd 0.1 _frame_id:=/robot_map
 ```
 
 Configure rviz to show the pointcloud2, make sure to increase the size of the particles for visualization.
