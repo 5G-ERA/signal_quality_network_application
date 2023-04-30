@@ -47,4 +47,16 @@ Configure rviz to show the pointcloud2, make sure to increase the size of the pa
 
 reference: https://wiki.ros.org/pcl_ros#pointcloud_to_pcd
 
+## From pcl & current map to new occupancy grid map:
+ 
+```
+rosrun era_5g_network_signal_mapper costmap_translate.py
+```
+
+Result looks like this, an occupancyGrid map is created with the data of the current map /map and the semantic pcl2. In this package, the filter of objects that should not be obstacles can be done by reading the pcl2 colour and drop the points before creating the new map.
+
+![pcl_to_grid](https://user-images.githubusercontent.com/26432703/235369752-40e69d1f-221b-4603-b649-3e1253b6b55e.png)
+
+
+
  
