@@ -22,7 +22,6 @@ Red = Colour([255, 0, 0])
 Blue = Colour([128,0,0])
 
 ACCEPTED_COLOURS.append(Green.binary)
-print(Green.binary)
 
 class Map(object):
 
@@ -139,10 +138,8 @@ class Mapper(object):
         
         try:
             for point in pcl_cloud:
-                #print(point[3])
                 # Only pcl points with colour not in the accepted array will be considered obstacles and added to the grid with prob(100)
                 if point[3] not in ACCEPTED_COLOURS:
-                    print("holi")
                     y = int((point[0] - self._map.origin_x) / self._map.resolution) 
                     x = int((point[1]*50 + self._map.origin_y*1+-40) +11/ self._map.resolution *1)
                     np_ocupancy[x][y] = 100.
@@ -182,5 +179,3 @@ if __name__ == '__main__':
     except rospy.ROSInterruptException:
         pass
     
-
-   
