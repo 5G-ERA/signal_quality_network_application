@@ -6,7 +6,6 @@ from sensor_msgs.msg import PointCloud2
 import sensor_msgs.point_cloud2 as pcl2
 from nav_msgs.msg import OccupancyGrid, MapMetaData
 from geometry_msgs.msg import Pose, Point, Quaternion
-from enum import Enum
 
 # List of colours from the pcl2 that should not be treated as obstacles by the ROS Navigation Stack.
 ACCEPTED_COLOURS = []
@@ -43,7 +42,7 @@ class Map(object):
 
         # Set up the header.
         self.grid_msg.header.stamp = rospy.Time.now()
-        self.grid_msg.header.frame_id = "robot_map" # robot_map
+        self.grid_msg.header.frame_id = map_frame # robot_map
 
         # .info is a nav_msgs/MapMetaData message. 
         self.grid_msg.info.resolution = self.resolution
@@ -63,12 +62,13 @@ class Map(object):
         return self.grid_msg
 
     def toMap(self, map_data):
+        """ Return a nav_msgs/OccupancyGrid representation of this map. """
 
         self.grid_msg = OccupancyGrid()
 
         # Set up the header.
         self.grid_msg.header.stamp = rospy.Time.now()
-        self.grid_msg.header.frame_id = "robot_map" # robot_map
+        self.grid_msg.header.frame_id = map_frame # robot_map
 
         # .info is a nav_msgs/MapMetaData message. 
         self.grid_msg.info.resolution = self.resolution
@@ -89,7 +89,7 @@ class Mapper(object):
         '''ROS node definition'''
         rospy.init_node('pcl2_to_costmap')
         # Subcribers
-        metadata = rospy.wait_for_message("/robot/map_metadata", MapMetaData, timeout=5)
+        metadata = rospy.wait_for_message(map_topic_metadata, MapMetaData, timeout=5)
 
         self.res = metadata.resolution
         self.w = metadata.width
@@ -97,7 +97,7 @@ class Mapper(object):
         self.o = metadata.origin
 
         self._map = Map(self.o.position.x, self.o.position.y, self.res, self.w, self.h)
-        map = rospy.wait_for_message("/robot/map", OccupancyGrid, timeout=5)
+        map = rospy.wait_for_message(map_topic, OccupancyGrid, timeout=5)
         self.grid_msg = self._map.toMap(map.data)
         rospy.Subscriber("/semantic_pcl", PointCloud2, self.pcl_callback, queue_size=1, buff_size=542428800 )
         
@@ -125,7 +125,7 @@ class Mapper(object):
                 arr = arr.data
         grid.data = arr.ravel()
         grid.header.stamp = rospy.Time.now()
-        grid.header.frame_id = "robot_map" 
+        grid.header.frame_id = map_frame #"robot_map" 
         grid.info = info
  
         return grid
@@ -174,8 +174,13 @@ class Mapper(object):
 
 
 if __name__ == '__main__':
+    map_frame = rospy.get_param('/costmap_translate/map_frame') # By default --> robot_map
+    map_topic = rospy.get_param('/costmap_translate/map_topic') # By default --> /robot/map
+    map_topic_metadata = rospy.get_param('/costmap_translate/map_metadata_topic') # By default --> /robot/map_metadata
+
     try:
         m = Mapper()
     except rospy.ROSInterruptException:
         pass
+    
     
