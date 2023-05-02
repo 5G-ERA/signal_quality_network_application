@@ -16,16 +16,11 @@ Run the robot simulation
 roslaunch rb1_base_sim_bringup rb1_base_complete.launch 
 ```
 
-Create current pointcloud around the robot:
+Launch the signal mapper
 ```
-rosrun era_5g_network_signal_mapper signal_mapper.py 
+ roslaunch era_5g_network_signal_mapper signal_mapper.launch 
 ```
 
-Save each published pointcloud to historical pcl map:
-
-```
-rosrun era_5g_network_signal_mapper sub_sigl_mapper.py 
-```
 ![rb1](https://user-images.githubusercontent.com/26432703/235520519-f5acbad8-6d19-420d-935f-e533671cd073.png)
 
 Configure RVIZ to show the pcl2 by adding a pointcloud2 object and add the **/semantic_pcl** topic. Also adjust the size of the particle to 0.05 for better visualization.
@@ -38,6 +33,23 @@ Change colour of current pointcloud:
 ```
 rosrun era_5g_network_signal_mapper colour_pub.py 
 ```
+
+### Change the boundingbox of the pcl2 publish ardoun the robot.
+
+If you want to change the boundingbox for another robot, then under ros node **signal_mapper.py** modify the following variables.
+
+    * height = 0.3
+    * lenght = 0.3
+    * lamba = 0.05
+    
+lamba is the amount of points to be created along the height and lenght. It may stay at 0.05 to look like the pictures presented in this tutorial.
+
+### Change the colour filtering:
+If you want the robot to ignore a particular colour (not consider it an obstacle), then under the ros node **costmap_translate.py** create an object of the class Colour and pass the rgb code.
+```
+Green = Colour([124, 252, 0])
+```
+Then append to ACCEPTED_COLOURS list.
 
  ## To save and load the pointcloud map use pcl_ros:
  
