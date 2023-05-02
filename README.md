@@ -34,7 +34,7 @@ Change colour of current pointcloud:
 rosrun era_5g_network_signal_mapper colour_pub.py 
 ```
 
-### Change the boundingbox of the pcl2 publish ardoun the robot.
+### Change the boundingbox of the pcl2 publish around the robot.
 
 If you want to change the boundingbox for another robot, then under ros node **signal_mapper.py** modify the following variables.
 
