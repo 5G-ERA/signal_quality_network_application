@@ -15,13 +15,16 @@ import sensor_msgs.point_cloud2 as pcl2
 if __name__ == '__main__':
 
     '''Input parameters'''
-    robot_base_frame = 'robot_base_link'
+    
+    robot_base_frame = rospy.get_param('/signal_mapper/base_link') # By default use --> 'robot_base_link'
+    rospy.loginfo('Parameter %s has value %s', rospy.resolve_name('base_link'), robot_base_frame)
+
     height = 0.3
     lenght = 0.3
     lamba = 0.05
 
     'Static variables'
-    semantic_map_frame = 'semantic_map'
+    semantic_map_frame = rospy.get_param('/signal_mapper/semantic_map_frame') # By default use --> 'semantic_map'
     
     #Give colour to the pointcloud around the robot.
     r = 124 # 
@@ -110,6 +113,6 @@ if __name__ == '__main__':
         br.sendTransform((0.0, 0.0, 0.0),
                          (0.0, 0.0, 0.0, 1.0),
                          rospy.Time.now(),
-                         "semantic_map",
-                         "robot_base_link")
+                         semantic_map_frame,
+                         robot_base_frame)
         create_simple_pointcloud()
