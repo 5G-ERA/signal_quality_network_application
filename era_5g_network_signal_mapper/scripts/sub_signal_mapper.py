@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 import rospy
-import math
-import sys
-import struct
 import numpy as np
 import roslib
 import tf
@@ -16,20 +13,11 @@ import std_msgs.msg
 import sensor_msgs.point_cloud2 as pcl2
 from tf2_sensor_msgs.tf2_sensor_msgs import do_transform_cloud
 
-# [[(0.3325471580028534, -1.9896667003631592, 0.025528445839881897, 8190976)]]
-
-
 if __name__ == '__main__':
 
-    '''Input parameters'''
-    robot_base_frame = 'robot_base_link'
-    height = 0.3
-    lenght = 0.3
-    lamba = 0.05
-
     'Static variables'
-    final_semantic_map_frame = 'final_semantic_map'
-    map_fixed_frame = 'robot_map'
+    map_frame = rospy.get_param('/sub_signal_mapper/map_frame') # By default --> /robot_map
+    semantic_map_frame = rospy.get_param('/sub_signal_mapper/semantic_map_frame') # By default --> /robot_map /semantic_map
 
     'historical pcl2'
     merged_cloud = []
@@ -44,34 +32,24 @@ if __name__ == '__main__':
             PointField('rgb', 12, PointField.UINT32, 1),
             ]
 
-        #scaled_polygon_pcl = pcl2.create_cloud_xyz32(header, cloud_points)
         scaled_polygon_pcl = pcl2.create_cloud(header, fields, points)
         scaled_polygon_pcl.header.stamp = rospy.Time.now()
-        scaled_polygon_pcl.header.frame_id = map_fixed_frame
+        scaled_polygon_pcl.header.frame_id = map_frame
         return scaled_polygon_pcl
 
     def sub_callback(pcl):
+        
+        tf.waitForTransform("/"+map_frame, "/"+semantic_map_frame, rospy.Time(), rospy.Duration(4.0))
+        t = tf.getLatestCommonTime(map_frame, "/"+semantic_map_frame) # Transform from /semantic_map frame to /robot_map frame.
 
-        # Transform pcl2 from frame /semantic_map to /robot_map
-        
-        tf.waitForTransform("/robot_map", "/semantic_map", rospy.Time(), rospy.Duration(4.0))
-        t = tf.getLatestCommonTime("/robot_map", "/semantic_map") # Transform from /semantic_map frame to /robot_map frame.
-        '''
-        position, quaternion = tf.lookupTransform("/robot_map", "/semantic_map", t)
-        print(position)
-        print(quaternion)
-        print("============")
-        
-        '''
         tf_buffer = tf2_ros.Buffer()
         tf_listener = tf2_ros.TransformListener(tf_buffer)
-        trans = tf_buffer.lookup_transform("robot_map", "semantic_map",rospy.Time(), rospy.Duration(4.0))
+        trans = tf_buffer.lookup_transform(map_frame, semantic_map_frame,rospy.Time(), rospy.Duration(4.0))
         cloud_out = do_transform_cloud(pcl, trans)
         
         # Get the points from the pcl2.
         gen = pcl2.read_points(cloud_out, skip_nans=True)
         int_data = list(gen)
-        #print("int_data: "+str(int_data))
 
         temp_list = []
         for element in int_data:
