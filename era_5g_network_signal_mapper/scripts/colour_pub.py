@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
 #colour_pub
-#Test github v2 6666v sdf fffff
-
 
 import rospy
 from std_msgs.msg import String
