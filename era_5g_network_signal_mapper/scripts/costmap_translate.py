@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import rospy
 import struct
 import numpy as np
@@ -140,8 +140,10 @@ class Mapper(object):
             for point in pcl_cloud:
                 # Only pcl points with colour not in the accepted array will be considered obstacles and added to the grid with prob(100)
                 if point[3] not in ACCEPTED_COLOURS:
-                    y = int((point[0] - self._map.origin_x) / self._map.resolution) 
-                    x = int((point[1]*50 + self._map.origin_y*1+-40) +11/ self._map.resolution *1)
+                    # y = int((point[0] - self._map.origin_x) / self._map.resolution) 
+                    # x = int((point[1]*50 + self._map.origin_y*1+-40) +11/ self._map.resolution *1)
+                    y = int(((point[0] - self._map.origin_x) / self._map.resolution) + 0)
+                    x = int(((point[1]*50 + self._map.origin_y*1+-40) +11/ self._map.resolution *1)+2040)
                     np_ocupancy[x][y] = 100.
 
             map_OccupancyGrid = self.numpy_to_occupancy_grid(np_ocupancy, self.grid_msg.info)
@@ -174,9 +176,9 @@ class Mapper(object):
 
 
 if __name__ == '__main__':
-    map_frame = rospy.get_param('/costmap_translate/map_frame') # By default --> robot_map
-    map_topic = rospy.get_param('/costmap_translate/map_topic') # By default --> /robot/map
-    map_topic_metadata = rospy.get_param('/costmap_translate/map_metadata_topic') # By default --> /robot/map_metadata
+    map_frame = 'robot_map' # rospy.get_param('/costmap_translate/map_frame') # By default --> robot_map
+    map_topic = '/robot/map' # rospy.get_param('/costmap_translate/map_topic') # By default --> /robot/map
+    map_topic_metadata = '/robot/map_metadata' #rospy.get_param('/costmap_translate/map_metadata_topic') # By default --> /robot/map_metadata
 
     try:
         m = Mapper()
