@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- Args -->
+    <arg name="host" default="localhost" doc="default is localhost" />
+    <arg name="port" default="8086" doc="port:8086" />
+    <arg name="username" default="test5g" doc="test5g" />  
+    <arg name="password" default="TEST2023" doc="TEST2023" />
+    <arg name="database" default="openwrt" doc="openwrt" />
+    
+    <!-- InfluxDB Database configuration-->
+    <node name="color_publisher_db" pkg="era_5g_network_signal_mapper" type="color_publisher_db.py" output="screen">
+        
+        <!-- Host address localhost or ip -->
+        <param name="host"   type="string" value="$(arg host)" />
+        <!-- Port -->
+	    <param name="port"   type="int" value="$(arg port)" />
+        <!-- Username of influxDB -->
+        <param name="username"   type="string" value="$(arg username)" />
+        <!-- Test password -->
+        <param name="password"   type="string" value="$(arg password)" />
+        <!-- Test password -->
+        <param name="database"   type="string" value="$(arg database)" />
+    </node>
+
+</launch>

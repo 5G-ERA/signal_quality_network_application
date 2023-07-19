@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- Args -->
+    <arg name="map_frame" default="robot_map" doc="default is robot_map" />
+    <arg name="map_topic" default="/robot/map" doc="/robot/map" />
+    <arg name="map_metadata_topic" default="/robot/map_metadata" doc="/robot/map_metadata" />    
+    
+    <!-- Publish a nav_msgs/OccupancyGrid msg from the pcl2 depending on the colour filtering-->
+    <node name="costmap_translate" pkg="era_5g_network_signal_mapper" type="costmap_translate.py" output="screen">
+        <!-- Map frame -->
+	    <param name="map_frame"   type="string" value="$(arg map_frame)" />
+        <!-- Topic of main map -->
+        <param name="map_topic"   type="string" value="$(arg map_topic)" />
+        <!-- Topic of main map metadata -->
+        <param name="map_metadata_topic"   type="string" value="$(arg map_metadata_topic)" />
+    </node>
+
+</launch>

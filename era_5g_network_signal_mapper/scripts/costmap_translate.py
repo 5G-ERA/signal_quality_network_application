@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import rospy
 import struct
 import numpy as np
@@ -140,8 +140,10 @@ class Mapper(object):
             for point in pcl_cloud:
                 # Only pcl points with colour not in the accepted array will be considered obstacles and added to the grid with prob(100)
                 if point[3] not in ACCEPTED_COLOURS:
-                    y = int((point[0] - self._map.origin_x) / self._map.resolution) 
-                    x = int((point[1]*50 + self._map.origin_y*1+-40) +11/ self._map.resolution *1)
+                    # y = int((point[0] - self._map.origin_x) / self._map.resolution) 
+                    # x = int((point[1]*50 + self._map.origin_y*1+-40) +11/ self._map.resolution *1)
+                    y = int(((point[0] - self._map.origin_x) / self._map.resolution) + 0)
+                    x = int(((point[1]*50 + self._map.origin_y*1+-40) +11/ self._map.resolution *1)+2040)
                     np_ocupancy[x][y] = 100.
 
             map_OccupancyGrid = self.numpy_to_occupancy_grid(np_ocupancy, self.grid_msg.info)
