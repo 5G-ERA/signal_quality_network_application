@@ -37,8 +37,10 @@ Open another terminal and enter in the "signal_mapper_container_ros1"
 docker exec -it signal_mapper_container_ros1 bash
 ```
 
-Connect to InfluxDB and publish colors accordingly to signal with customized params of this connection:
+Connect to the InfluxDB and publish colors accordingly to signal with customized params of this connection:
+
 client = InfluxDBClient('192.168.23.245', 8086, 'test5g', 'TEST2023', 'openwrt')
+
 client = InfluxDBClient(host, port, username, password, database)
 
 ```
