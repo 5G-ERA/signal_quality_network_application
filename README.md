@@ -11,7 +11,7 @@ Download docker image of signal mapper and install container in interactive mode
 docker run --network host --name signal_mapper_container_ros1 -it appmdeve/signal_mapper_ros1
 ```
 
-For oppening another terminal with same container run; assumes that container is active.
+For oppening another terminal with same container run: (assumes that container is active.)
 ```
 docker exec -it signal_mapper_container_ros1 bash
 ```
