@@ -16,7 +16,7 @@ For oppening another terminal with same container run: (assumes that container i
 docker exec -it signal_mapper_container_ros1 bash
 ```
 
-For reaunching container run:   (assumes that container was instaled previously)
+For relaunching container run:   (assumes that container was instaled previously)
 
 ```
 docker start -i signal_mapper_container_ros1
