@@ -4,9 +4,9 @@
     <!-- Args -->
     <arg name="host" default="localhost" doc="default is localhost" />
     <arg name="port" default="8086" doc="port:8086" />
-    <arg name="username" default="test5g" doc="test5g" />  
-    <arg name="password" default="TEST2023" doc="TEST2023" />
-    <arg name="database" default="openwrt" doc="openwrt" />
+    <arg name="username" default="test_username" doc="test_username" />  
+    <arg name="password" default="test_password" doc="test_password" />
+    <arg name="database" default="my_database" doc="my_database" />
     
     <!-- InfluxDB Database configuration-->
     <node name="color_publisher_db" pkg="era_5g_network_signal_mapper" type="color_publisher_db.py" output="screen">

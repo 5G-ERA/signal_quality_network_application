@@ -66,7 +66,38 @@ docker exec -it signal_mapper_container_ros1 bash
 ```
 
 Run costmap_translate launch for publishing created map with customized parameters
+
+following parameters:
+
+
+map_metadata_topic
+
+
+map_topic
+
+
+map_frame
+
+
+Map configuration:
+
+
+param_origin_x
+
+
+param_origin_y
+
+
+param_resolution
+
+
+param_width
+
+
+param_height
+
+
 ```
-roslaunch era_5g_network_signal_mapper costmap_translate.launch map_metadata_topic:=/map_metadata map_topic:=/map map_frame:=robot_map
+roslaunch era_5g_network_signal_mapper costmap_translate.launch map_metadata_topic:=/map_metadata map_topic:=/map map_frame:=robot_map param_origin_x:=-50 param_origin_y:=-50 param_resolution:=0.05 param_width:=1985 param_height:=1985
 ```
 

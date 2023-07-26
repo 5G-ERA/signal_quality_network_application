@@ -4,7 +4,13 @@
     <!-- Args -->
     <arg name="map_frame" default="robot_map" doc="default is robot_map" />
     <arg name="map_topic" default="/robot/map" doc="/robot/map" />
-    <arg name="map_metadata_topic" default="/robot/map_metadata" doc="/robot/map_metadata" />    
+    <arg name="map_metadata_topic" default="/robot/map_metadata" doc="/robot/map_metadata" />
+        <!-- Setup map -->
+    <arg name="param_origin_x" default="-50" doc="initial robot position x axe" />
+    <arg name="param_origin_y" default="-50" doc="initial robot position y axe" />
+    <arg name="param_resolution" default="0.05" doc="map resolution" />
+    <arg name="param_width" default="1984" doc="width of the map" />
+    <arg name="param_height" default="1984" doc="height of the map" />
     
     <!-- Publish a nav_msgs/OccupancyGrid msg from the pcl2 depending on the colour filtering-->
     <node name="costmap_translate" pkg="era_5g_network_signal_mapper" type="costmap_translate.py" output="screen">
@@ -14,6 +20,19 @@
         <param name="map_topic"   type="string" value="$(arg map_topic)" />
         <!-- Topic of main map metadata -->
         <param name="map_metadata_topic"   type="string" value="$(arg map_metadata_topic)" />
+        <!-- Topic of main map -->
+        <param name="map_topic"   type="string" value="$(arg map_topic)" />
+        <!-- Setup map -->
+        <!-- Initial robot position x axe -->
+        <param name="param_origin_x" value="$(arg param_origin_x)" type="int" />
+        <!-- Initial robot position y axe -->
+        <param name="param_origin_y" value="$(arg param_origin_y)" type="int" />
+        <!-- Resolution of the map -->
+        <param name="param_resolution" value="$(arg param_resolution)" type="double" />
+        <!-- Width of the map -->
+        <param name="param_width" value="$(arg param_width)" type="int" />
+        <!-- Height of the map -->
+        <param name="param_height" value="$(arg param_height)" type="int" />
     </node>
 
 </launch>

@@ -1,27 +1,32 @@
 #!/usr/bin/env python3
-# git commit
 import rospy
 from std_msgs.msg import String
 from influxdb import InfluxDBClient
 
-#Setup database
-client = InfluxDBClient('192.168.23.245', 8086, 'test5g', 'TEST2023', 'openwrt')
-connection_success = False
-if client.switch_database('openwrt'):
-    #check if connection with database is successful
-    connection_success = True
-else:
-    client.close()
-    print("Connection Error")
-
 def out_5g_signal():
+
+    host = rospy.get_param('/costmap_translate/host') # By default --> -50
+    port = rospy.get_param('/costmap_translate/port') # By default --> -50
+    username = rospy.get_param('/costmap_translate/username') # By default --> 0.05
+    password = rospy.get_param('/costmap_translate/password') # By default --> 1984
+    database = rospy.get_param('/costmap_translate/database') # By default --> robot_map
+
+    #Setup database
+    client = InfluxDBClient(host, port, username, password, database)
+    connection_success = False
+    if client.switch_database(database):
+        #check if connection with database is successful
+        connection_success = True
+    else:
+        client.close()
+        print("Connection Error")
 
     if connection_success:
 
         try: 
             result = client.query('SELECT last("RSRP"), last("RSRQ") from gsmctl;')
         
-            signal_strength = "Red"
+            signal_strength = "RED"
             pub = rospy.Publisher('chatter', String, queue_size=1)
             rospy.init_node('out_5g_signal', anonymous=True)
             rate = rospy.Rate(1) 
@@ -32,28 +37,28 @@ def out_5g_signal():
                     rsrq =(item['last_1'])
 
                 # check signal and printing lowest signal between 2 parameters RSRP and RSRQ
-                # Green Strong Signal
-                # Yellow Good Signal
-                # Orange Poor Signal
-                # Red No Signal
+                # GREEN Strong Signal
+                # YELLOW Good Signal
+                # ORANGE Poor Signal
+                # RED No Signal
                 if  rsrp < -100.0:
-                    signal_strength = "Red"            
+                    signal_strength = "RED"            
                 elif rsrq < -20.0:
-                    signal_strength = "Red"
+                    signal_strength = "RED"
                 elif  (rsrp <= -90.0) & (rsrp > -100.0):
-                    signal_strength = "Orange"
+                    signal_strength = "ORANGE"
                 elif  (rsrq <= -15.0) & (rsrq > -20.0):
-                    signal_strength = "Orange"
+                    signal_strength = "ORANGE"
                 elif  (rsrp <= -80.0) & (rsrp > -90.0):
-                    signal_strength = "Yellow"
+                    signal_strength = "YELLOW"
                 elif  (rsrq <= -10.0) & (rsrq > -15.0):
-                    signal_strength = "Yellow"
+                    signal_strength = "YELLOW"
                 elif rsrp > -80.0:
-                    signal_strength = "Green"
+                    signal_strength = "GREEN"
                 elif rsrq > -10.0:
-                    signal_strength = "Green"
+                    signal_strength = "GREEN"
                 else:
-                    signal_strength = "Red"
+                    signal_strength = "RED"
                 rospy.loginfo(signal_strength)
                 pub.publish(signal_strength)
                 rate.sleep()

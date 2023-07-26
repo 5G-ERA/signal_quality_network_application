@@ -14,18 +14,17 @@ def out_5g_signal():
     #password='TEST2023'
     #database='openwrt'
 
-    host = rospy.get_param('/color_publisher/host') # By default use --> 'localhost'
-    port = rospy.get_param('/color_publisher/port') # By default use --> 8086
-    username = rospy.get_param('/color_publisher/username') # By default use --> 'test5g'
-    password = rospy.get_param('/color_publisher/password') # By default use --> 'TEST2023'
-    database = rospy.get_param('/color_publisher/database') # By default use --> 'openwrt'
+    host = rospy.get_param('/color_publisher/host')
+    port = rospy.get_param('/color_publisher/port')
+    username = rospy.get_param('/color_publisher/username') 
+    password = rospy.get_param('/color_publisher/password') 
+    database = rospy.get_param('/color_publisher/database') 
 
     client = InfluxDBClient(host, port, username, password, database)
-    #client = InfluxDBClient('192.168.23.245', 8086, 'test5g', 'TEST2023', 'openwrt')
-
+    
     connection_success = False
     # Checking if connection with database is successful
-    if client.switch_database('openwrt'):
+    if client.switch_database(database):
         rospy.loginfo('Connecting InfluxDB %s to host: "%s"',database, host)        
         connection_success = True
         

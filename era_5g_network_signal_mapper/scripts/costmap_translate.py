@@ -24,8 +24,20 @@ ACCEPTED_COLOURS.append(Green.binary)
 
 class Map(object):
 
-    def __init__(self, origin_x=-50, origin_y=-50, resolution=0.02, 
-                 width=50, height=50):
+
+    def __init__(self):
+
+        self.origin_x = param_origin_x
+        self.origin_y = param_origin_y
+        self.resolution = param_resolution
+        self.width = param_width 
+        self.height = param_height 
+        self.grid = np.full((param_width, param_height), -1.)
+    
+    """
+    # Hardcoded map
+    def __init__(self, origin_x=-50, origin_y=-50, resolution=0.05, 
+                width=1984, height=1984):
 
         self.origin_x = origin_x
         self.origin_y = origin_y
@@ -33,8 +45,7 @@ class Map(object):
         self.width = width 
         self.height = height 
         self.grid = np.full((height, width), -1.)
-    
-
+    """
     def to_message(self):
         """ Return a nav_msgs/OccupancyGrid representation of this map. """
      
@@ -142,8 +153,8 @@ class Mapper(object):
                 if point[3] not in ACCEPTED_COLOURS:
                     # y = int((point[0] - self._map.origin_x) / self._map.resolution) 
                     # x = int((point[1]*50 + self._map.origin_y*1+-40) +11/ self._map.resolution *1)
-                    y = int(((point[0] - self._map.origin_x) / self._map.resolution) + 0)
-                    x = int(((point[1]*50 + self._map.origin_y*1+-40) +11/ self._map.resolution *1)+2040)
+                    y = int((point[0] - self._map.origin_x) / self._map.resolution)
+                    x = int((point[1] - self._map.origin_y) +11/ self._map.resolution)
                     np_ocupancy[x][y] = 100.
 
             map_OccupancyGrid = self.numpy_to_occupancy_grid(np_ocupancy, self.grid_msg.info)
@@ -176,6 +187,15 @@ class Mapper(object):
 
 
 if __name__ == '__main__':
+    
+    # /*************/ /*************/ /*************/ /*************/ /*************/
+    # Setup map
+    param_origin_x = rospy.get_param('/costmap_translate/param_origin_x') # By default --> -50
+    param_origin_y = rospy.get_param('/costmap_translate/param_origin_y') # By default --> -50
+    param_resolution = rospy.get_param('/costmap_translate/param_resolution') # By default --> 0.05
+    param_width = rospy.get_param('/costmap_translate/param_width') # By default --> 1984
+    param_height = rospy.get_param('/costmap_translate/param_height') # By default --> robot_map
+    # /*************/ /*************/ /*************/ /*************/ /*************/
     map_frame = rospy.get_param('/costmap_translate/map_frame') # By default --> robot_map
     map_topic = rospy.get_param('/costmap_translate/map_topic') # By default --> /robot/map
     map_topic_metadata = rospy.get_param('/costmap_translate/map_metadata_topic') # By default --> /robot/map_metadata
