@@ -8,12 +8,6 @@ def out_5g_signal():
 
     # Setup database
 
-    #host='localhost'
-    #port=8086
-    #username='test5g'
-    #password='TEST2023'
-    #database='openwrt'
-
     host = rospy.get_param('/color_publisher/host')
     port = rospy.get_param('/color_publisher/port')
     username = rospy.get_param('/color_publisher/username') 

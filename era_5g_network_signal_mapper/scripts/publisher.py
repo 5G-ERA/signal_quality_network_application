@@ -5,11 +5,11 @@ from influxdb import InfluxDBClient
 
 def out_5g_signal():
 
-    host = rospy.get_param('/costmap_translate/host') # By default --> -50
-    port = rospy.get_param('/costmap_translate/port') # By default --> -50
-    username = rospy.get_param('/costmap_translate/username') # By default --> 0.05
-    password = rospy.get_param('/costmap_translate/password') # By default --> 1984
-    database = rospy.get_param('/costmap_translate/database') # By default --> robot_map
+    host = rospy.get_param('/costmap_translate/host')
+    port = rospy.get_param('/costmap_translate/port')
+    username = rospy.get_param('/costmap_translate/username')
+    password = rospy.get_param('/costmap_translate/password')
+    database = rospy.get_param('/costmap_translate/database')
 
     #Setup database
     client = InfluxDBClient(host, port, username, password, database)
